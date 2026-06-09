@@ -114,12 +114,12 @@ class Preaviso {
 // ==========================================
 class VacacionesProporcionales {
     private Empleado empleado;
-    private Antiguedad antiguedad;
+    private Antiguedad aniosAntiguedad;
 
     // Constructor que recibe un empleado y su antigüedad para calcular las vacaciones proporcionales
     public VacacionesProporcionales(Empleado empleado, Antiguedad antiguedad) {
         this.empleado = empleado;
-        this.antiguedad = antiguedad;
+        this.aniosAntiguedad = antiguedad;
     }
 
     // Método para determinar los días base de vacaciones por ley según la antigüedad del empleado
@@ -228,7 +228,10 @@ class IndemnizacionConReforma extends Indemnizacion {
     @Override
     public double calcularIndemnizacion() {
         double baseSalarialConReforma = empleado.getSueldoBruto() * empleado.getAntiguedad().calcularAniosLiquidacion();
-        return baseSalarialConReforma + preaviso.calcularMontoPreaviso() + vacacionesProporcionales.calcularMontoProporcional() + sacProporcional.calcularMontoProporcional();
+        double preaviso = this.preaviso.calcularMontoPreaviso();
+        double vacaciones = this.vacacionesProporcionales.calcularMontoProporcional();
+        double sac = this.sacProporcional.calcularMontoProporcional();
+        return baseSalarialConReforma + preaviso + vacaciones + sac;
     }       
 }
 
@@ -243,8 +246,12 @@ class IndemnizacionSinReforma extends Indemnizacion {
 
     @Override
     public double calcularIndemnizacion() {
-        double baseSalarialSinReforma = empleado.getSueldoBruto() + preaviso.calcularMontoPreaviso() + vacacionesProporcionales.calcularMontoProporcional() + sacProporcional.calcularMontoProporcional();
-        return baseSalarialSinReforma + preaviso.calcularMontoPreaviso() + vacacionesProporcionales.calcularMontoProporcional() + sacProporcional.calcularMontoProporcional();
+       
+        double baseSalarialSinReforma = (empleado.getSueldoBruto() + (empleado.getSueldoBruto() / 12)) * empleado.getAntiguedad().calcularAniosLiquidacion();
+        double preaviso = this.preaviso.calcularMontoPreaviso();
+        double vacaciones = this.vacacionesProporcionales.calcularMontoProporcional();
+        double sac = this.sacProporcional.calcularMontoProporcional();
+        return baseSalarialSinReforma + preaviso + vacaciones + sac;
     }
 }
 
