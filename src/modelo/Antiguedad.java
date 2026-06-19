@@ -25,5 +25,6 @@ public class Antiguedad {
       if (diasRemanentes > 90 || (aniosCompletos == 0 && AntiguedadEnDias() > 90)) {
           return aniosCompletos + 1; // Si hay más de 90 días remanentes, se cuenta como un año adicional
       }
+      return aniosCompletos;
     }
 }
