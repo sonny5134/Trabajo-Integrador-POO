@@ -19,7 +19,7 @@ public class VentanaPrincipal extends JFrame {
         empresa = new Empresa(""); 
 
         setTitle("Sistema de Gestión de Indemnizaciones");
-        setSize(500, 550); // Aumentamos un poquito el alto para acomodar el nuevo campo
+        setSize(700, 550); // Aumentamos un poquito el alto para acomodar el nuevo campo
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); 
         setLayout(new BorderLayout());
