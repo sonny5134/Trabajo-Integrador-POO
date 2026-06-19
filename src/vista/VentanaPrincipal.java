@@ -9,24 +9,28 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class VentanaPrincipal extends JFrame {
-    private JTextField txtNombre, txtSueldo, txtIngreso, txtEgreso;
+    private JTextField txtRazonSocial, txtNombre, txtSueldo, txtIngreso, txtEgreso;
     private JCheckBox chkPreavisoOtorgado;
     private JComboBox<String> cmbRegimen;
     private JTextArea txtResultado;
     private Empresa empresa;
 
     public VentanaPrincipal() {
-        empresa = new Empresa("Soluciones IT S.A."); // Inicializamos la colección
+        empresa = new Empresa(""); 
 
         setTitle("Sistema de Gestión de Indemnizaciones");
-        setSize(500, 500);
+        setSize(500, 550); // Aumentamos un poquito el alto para acomodar el nuevo campo
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Centrar en pantalla
+        setLocationRelativeTo(null); 
         setLayout(new BorderLayout());
 
-        // Panel superior con el formulario
-        JPanel panelFormulario = new JPanel(new GridLayout(6, 2, 5, 5));
+        // Panel superior con el formulario (ahora configurado para 7 filas)
+        JPanel panelFormulario = new JPanel(new GridLayout(7, 2, 5, 5));
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        panelFormulario.add(new JLabel("Razón Social de la Empresa:"));
+        txtRazonSocial = new JTextField();
+        panelFormulario.add(txtRazonSocial);
 
         panelFormulario.add(new JLabel("Nombre del Empleado:"));
         txtNombre = new JTextField();
@@ -65,7 +69,7 @@ public class VentanaPrincipal extends JFrame {
         txtResultado.setEditable(false);
         txtResultado.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane scroll = new JScrollPane(txtResultado);
-        scroll.setPreferredSize(new Dimension(480, 200));
+        scroll.setPreferredSize(new Dimension(480, 220));
         add(scroll, BorderLayout.SOUTH);
 
         // Acción del botón
@@ -79,7 +83,14 @@ public class VentanaPrincipal extends JFrame {
 
     private void calcularYMostrar() {
         try {
-            // Leer datos del formulario
+            // 1. Leer la razón social y actualizar el objeto Empresa
+            String razonSocialInput = txtRazonSocial.getText();
+            if (razonSocialInput.trim().isEmpty()) {
+                razonSocialInput = "Empresa Sin Nombre S.A.";
+            }
+            empresa.setRazonSocial("R.S. " + razonSocialInput);
+
+            // 2. Leer el resto de los datos del formulario
             String nombre = txtNombre.getText();
             double sueldo = Double.parseDouble(txtSueldo.getText());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -87,9 +98,9 @@ public class VentanaPrincipal extends JFrame {
             LocalDate egreso = LocalDate.parse(txtEgreso.getText(), formatter);
             boolean preavisoOtorgado = chkPreavisoOtorgado.isSelected();
 
-            // Instanciar objetos
+            // 3. Instanciar los objetos necesarios para el cálculo
             Empleado emp = new Empleado(nombre, sueldo, ingreso, egreso, preavisoOtorgado);
-            empresa.altaEmpleado(emp); // Guardamos en la colección
+            empresa.altaEmpleado(emp); 
 
             Preaviso pre = new Preaviso(emp);
             VacacionesProporcionales vac = new VacacionesProporcionales(emp, emp.getAntiguedad());
@@ -98,19 +109,19 @@ public class VentanaPrincipal extends JFrame {
             Indemnizacion indemnizacion;
             String regimenSeleccionado = (String) cmbRegimen.getSelectedItem();
 
-            // Polimorfismo según selección en la GUI
+            // Aplicación de Polimorfismo según selección en la GUI
             if (regimenSeleccionado.contains("Sin Reforma")) {
                 indemnizacion = new IndemnizacionSinReforma(emp, pre, vac, sac);
             } else {
                 indemnizacion = new IndemnizacionConReforma(emp, pre, vac, sac);
             }
 
-            // Generar Reporte
-            ReciboLiquidacion recibo = new ReciboLiquidacion(indemnizacion, regimenSeleccionado);
+            // 4. Generar Reporte pasando el objeto empresa dinámico
+            ReciboLiquidacion recibo = new ReciboLiquidacion(indemnizacion, regimenSeleccionado, empresa);
             txtResultado.setText(recibo.generarReporte());
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error en los datos ingresados. Revise las fechas y el sueldo.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error en los datos ingresados. Revise las fechas (DD/MM/AAAA) y el sueldo.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

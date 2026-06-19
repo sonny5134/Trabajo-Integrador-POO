@@ -15,6 +15,14 @@ public class Empresa {
         this.empleados.add(emp);
     }
 
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+    
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
     public List<Empleado> obtenerTodosLosEmpleados() {
         return this.empleados;
     }
