@@ -107,25 +107,82 @@ class IndemnizacionConReforma extends Indemnizacion {
     public double calcularBase() { return emp.getSueldoBruto()*emp.getAntiguedad().calcularAniosLiquidacion(); }
 }
 
-// ==================== CALCULADORA ART ====================
-class CalculadoraART {
-    private static final double PISO_2026 = 97502420.0;
-    private String nombre; private double ibm; private int edad;
-    private double pctIncap; private boolean esLaboral;
+// ==================== ACCIDENTE ART (Abstracta) ====================
+abstract class CalculadoraART {
+    protected static final double PISO_2026 = 97502420.0;
+    protected String nombre; 
+    protected double ibm; 
+    protected int edad;
+    protected double pctIncap;
 
-    public CalculadoraART(String n, double i, int e, double p, boolean l) {
-        nombre=n; ibm=i; edad=e; pctIncap=p; esLaboral=l;
+    public CalculadoraART(String n, double i, int e, double p) {
+        this.nombre = n; 
+        this.ibm = i; 
+        this.edad = e; 
+        this.pctIncap = p;
     }
-    public double formula()    { return 53.0*ibm*(pctIncap/100.0)*(65.0/edad); }
-    public double piso()       { return PISO_2026*(pctIncap/100.0); }
-    public double base()       { return Math.max(formula(),piso()); }
-    public double iapu()       { return esLaboral ? base()*0.20 : 0.0; }
-    public double total()      { return base()+iapu(); }
+    
+    public double formula() { 
+        return 53.0 * ibm * (pctIncap / 100.0) * (65.0 / edad); 
+    }
+    
+    public double piso() { 
+        return PISO_2026 * (pctIncap / 100.0); 
+    }
+    
+    public double base() { 
+        return Math.max(formula(), piso()); 
+    }
+    
+    // Métodos abstractos que definirán las clases hijas
+    public abstract double iapu();
+    public abstract String getTipoSiniestro();
+    
+    public double total() { 
+        return base() + iapu(); 
+    }
+    
+    // Getters comunes
     public String getNombre()  { return nombre; }
     public double getIBM()     { return ibm; }
     public int getEdad()       { return edad; }
     public double getPct()     { return pctIncap; }
-    public boolean isLaboral() { return esLaboral; }
+}
+
+// ==================== ACCIDENTE EN EL TRABAJO ====================
+class AccidenteLaboral extends CalculadoraART {
+    public AccidenteLaboral(String n, double i, int e, double p) { 
+        super(n, i, e, p); 
+    }
+    
+    @Override
+    public double iapu() { 
+        // Los accidentes dentro del establecimiento llevan el 20% adicional (L. 26.773)
+        return base() * 0.20; 
+    }
+    
+    @Override
+    public String getTipoSiniestro() { 
+        return "Accidente Laboral / Enf. Profesional"; 
+    }
+}
+
+// ==================== ACCIDENTE IN ITINERE ====================
+class AccidenteInItinere extends CalculadoraART {
+    public AccidenteInItinere(String n, double i, int e, double p) { 
+        super(n, i, e, p); 
+    }
+    
+    @Override
+    public double iapu() { 
+        // Los accidentes de trayecto (in itinere) están excluidos del adicional del 20%
+        return 0.0; 
+    }
+    
+    @Override
+    public String getTipoSiniestro() { 
+        return "Accidente In Itinere"; 
+    }
 }
 
 // ==================== FABRICA DE LIQUIDACIONES ====================
@@ -176,8 +233,13 @@ public class FabricaLiquidacion {
     }
 
     public static String calcularART(String nombre, double ibm, int edad, double pct, boolean esLaboral) {
-        CalculadoraART c = new CalculadoraART(nombre, ibm, edad, pct, esLaboral);
+        // Fábrica polimórfica según la bandera recibida desde la vista
+        CalculadoraART c = esLaboral 
+            ? new AccidenteLaboral(nombre, ibm, edad, pct)
+            : new AccidenteInItinere(nombre, ibm, edad, pct);
+            
         String criterio = c.formula() >= c.piso() ? "Formula Legal" : "Piso Minimo (Res. SRT 15/2026)";
+        
         return String.format(
             "  Trabajador      : %s\n" +
             "  Siniestro       : %s\n" +
@@ -194,15 +256,19 @@ public class FabricaLiquidacion {
             "  TOTAL ESTIMADO  : $%,.2f\n" +
             "  (*) Resultado orientativo.\n",
             c.getNombre(),
-            esLaboral ? "Accidente Laboral / Enf. Profesional" : "Accidente In Itinere",
+            c.getTipoSiniestro(), // Dinámico por subclase
             c.getIBM(), c.getEdad(), c.getPct(),
             c.formula(), c.piso(), criterio,
-            c.base(), c.iapu(), c.total()
+            c.base(), 
+            c.iapu(),             // Dinámico por subclase ($0 o 20%)
+            c.total()
         );
     }
 
     public static double calcularTotalART(double ibm, int edad, double pct, boolean esLaboral) {
-        CalculadoraART c = new CalculadoraART("", ibm, edad, pct, esLaboral);
+        CalculadoraART c = esLaboral 
+            ? new AccidenteLaboral("", ibm, edad, pct)
+            : new AccidenteInItinere("", ibm, edad, pct);
         return c.total();
     }
 }
