@@ -98,8 +98,8 @@ public class PanelCasos extends JPanel {
         UI.BtnIcono btnDetalle = new UI.BtnIcono("\uD83D\uDCC4 Detalle", UI.VERDE, new Color(25,130,60));
         UI.BtnIcono btnPDF     = new UI.BtnIcono("\uD83D\uDCCB PDF", new Color(150,60,180), new Color(110,30,140));
 
-        btnAtras.addActionListener(e -> { caso.retrocederEstado(); refrescar(); });
-        btnAdelan.addActionListener(e -> { caso.avanzarEstado(); refrescar(); });
+        btnAtras.addActionListener(e -> { caso.retrocederEstado(); guardarDatos(); refrescar(); });
+        btnAdelan.addActionListener(e -> { caso.avanzarEstado(); guardarDatos(); refrescar(); });
         btnDetalle.addActionListener(e -> abrirDetalle(cli, caso));
         btnPDF.addActionListener(e -> generarResumenPDF(cli, caso));
 
@@ -455,6 +455,14 @@ public class PanelCasos extends JPanel {
     }
 
     // ==================== DIALOGO NUEVO CASO ====================
+    private void guardarDatos() {
+        modelo.Repositorio repo = modelo.Repositorio.getInstance();
+        if (repo.getAbogadoActual() != null) {
+            persistencia.PersistenciaDatos.guardar(
+                repo.getAbogadoActual().getDni(), repo.getClientes());
+        }
+    }
+
     private void dialogoNuevoCaso() {
         List<Cliente> clientes = Repositorio.getInstance().getClientes();
         if (clientes.isEmpty()) {
@@ -524,7 +532,7 @@ public class PanelCasos extends JPanel {
                     cRazon.getText().trim(), cCuit.getText().trim(),
                     cDomEmp.getText().trim(), ing, eg, sueldo
                 );
-                dlg.dispose(); refrescar();
+                dlg.dispose(); guardarDatos(); refrescar();
             } catch(Exception ex) {
                 JOptionPane.showMessageDialog(dlg,"Revise los datos.","Error",JOptionPane.ERROR_MESSAGE);
             }

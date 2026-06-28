@@ -25,7 +25,18 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal() {
         setTitle("LiquidaLab — Sistema de Gestion Laboral");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                modelo.Repositorio repo = modelo.Repositorio.getInstance();
+                if (repo.getAbogadoActual() != null) {
+                    persistencia.PersistenciaDatos.guardar(
+                        repo.getAbogadoActual().getDni(), repo.getClientes());
+                }
+                System.exit(0);
+            }
+        });
         setLayout(new BorderLayout());
 
         panelDashboard = new PanelDashboard(this);
@@ -138,7 +149,10 @@ public class VentanaPrincipal extends JFrame {
         btnSalir.setContentAreaFilled(false); btnSalir.setBorderPainted(false);
         btnSalir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnSalir.addActionListener(e -> {
-            new PantallaLogin().setVisible(true);
+            persistencia.PersistenciaDatos.guardar(
+                        modelo.Repositorio.getInstance().getAbogadoActual().getDni(),
+                        modelo.Repositorio.getInstance().getClientes());
+                    new PantallaLogin().setVisible(true);
             dispose();
         });
 
