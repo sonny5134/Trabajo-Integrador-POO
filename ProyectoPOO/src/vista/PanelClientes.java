@@ -104,6 +104,7 @@ public class PanelClientes extends JPanel {
                 "Confirmar", JOptionPane.YES_NO_OPTION);
             if (op == JOptionPane.YES_OPTION) {
                 Repositorio.getInstance().eliminarCliente(c);
+                guardarDatos();
                 refrescar();
             }
         });
@@ -152,10 +153,19 @@ public class PanelClientes extends JPanel {
             );
             dlg.dispose();
             refrescar();
+            guardarDatos();
         });
 
         dlg.add(new JScrollPane(panel));
         dlg.setVisible(true);
+    }
+
+    private void guardarDatos() {
+        modelo.Repositorio repo = modelo.Repositorio.getInstance();
+        if (repo.getAbogadoActual() != null) {
+            persistencia.PersistenciaDatos.guardar(
+                repo.getAbogadoActual().getDni(), repo.getClientes());
+        }
     }
 
     private void dialogoEditarCliente(Cliente c) {

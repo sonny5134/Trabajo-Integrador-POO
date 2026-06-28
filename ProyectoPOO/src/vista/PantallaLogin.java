@@ -3,6 +3,7 @@ package vista;
 import modelo.Abogado;
 import modelo.Repositorio;
 import persistencia.PersistenciaAbogado;
+import persistencia.PersistenciaDatos;
 import ui.UI;
 
 import javax.swing.*;
@@ -40,7 +41,6 @@ public class PantallaLogin extends JFrame {
         card.setBorder(BorderFactory.createEmptyBorder(40, 50, 40, 50));
         card.setPreferredSize(new Dimension(430, 530));
 
-        // Logo
         JLabel ico = new JLabel("\u2696", SwingConstants.CENTER);
         ico.setFont(new Font("SansSerif", Font.PLAIN, 56));
         ico.setForeground(UI.AZUL_ACENTO);
@@ -56,20 +56,17 @@ public class PantallaLogin extends JFrame {
         sub.setForeground(new Color(140, 165, 200));
         sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Campos
         UI.Campo txtDni = new UI.Campo();
         txtDni.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
 
         JPasswordField passField = crearPasswordField();
 
-        // Botones
         UI.BtnPrimario btnLogin = new UI.BtnPrimario("  Ingresar", UI.AZUL_ACENTO, new Color(31, 97, 141));
         btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton btnIrRegistro = linkBtn("¿No tiene cuenta? Registrarse");
+        JButton btnIrRegistro = linkBtn("No tiene cuenta? Registrarse");
 
-        // Layout
         card.add(ico);
         card.add(Box.createVerticalStrut(8));
         card.add(titulo);
@@ -90,7 +87,6 @@ public class PantallaLogin extends JFrame {
 
         outer.add(card);
 
-        // Accion login
         btnLogin.addActionListener(e -> {
             String dni  = txtDni.getText().trim();
             String pass = new String(passField.getPassword());
@@ -100,7 +96,6 @@ public class PantallaLogin extends JFrame {
                 return;
             }
 
-            // Buscar abogado por DNI en su archivo propio
             Abogado a = PersistenciaAbogado.cargarPorDni(dni);
 
             if (a == null) {
@@ -117,8 +112,11 @@ public class PantallaLogin extends JFrame {
                 return;
             }
 
-            // Login exitoso — cargar sesion limpia para este abogado
-            Repositorio.getInstance().setAbogadoActual(a);
+            // Login exitoso: cargar abogado y sus datos guardados
+            Repositorio repo = Repositorio.getInstance();
+            repo.setAbogadoActual(a);
+            PersistenciaDatos.cargar(a.getDni(), repo);
+
             abrirVentanaPrincipal();
         });
 
@@ -198,7 +196,7 @@ public class PantallaLogin extends JFrame {
             }
             if (PersistenciaAbogado.existeAbogado(dni)) {
                 JOptionPane.showMessageDialog(this,
-                    "Ya existe un abogado registrado con ese DNI.\nInicie sesion con su cuenta.",
+                    "Ya existe un abogado registrado con ese DNI.",
                     "DNI ya registrado", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -214,7 +212,6 @@ public class PantallaLogin extends JFrame {
         });
 
         btnVolver.addActionListener(e -> cards.show(contenido, "login"));
-
         return outer;
     }
 

@@ -1,0 +1,9 @@
+CLIENTE_INI
+id=CLI-7A88577D
+nombre=francesco
+dni=3466666
+cuil=2034666661
+telefono=161626
+email=h@gmail.com
+domicilio=pilar
+CLIENTE_FIN
