@@ -1,13 +1,13 @@
 package ui;
-
+ 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-
+ 
 public class UI {
-
+ 
     // ===================== COLORES =====================
     public static final Color AZUL_OSCURO  = new Color(13, 27, 52);
     public static final Color AZUL_MEDIO   = new Color(22, 48, 95);
@@ -23,7 +23,7 @@ public class UI {
     public static final Color FONDO_CAMPO  = new Color(250, 252, 255);
     public static final Color BORDE_CAMPO  = new Color(190, 205, 225);
     public static final Color CARD_BG      = new Color(255, 255, 255);
-
+ 
     // ===================== FUENTES =====================
     public static final Font F_TITULO    = new Font("SansSerif", Font.BOLD, 22);
     public static final Font F_SUBTITULO = new Font("SansSerif", Font.BOLD, 14);
@@ -33,7 +33,7 @@ public class UI {
     public static final Font F_NAV       = new Font("SansSerif", Font.BOLD, 13);
     public static final Font F_MONO      = new Font("Monospaced", Font.PLAIN, 12);
     public static final Font F_BADGE     = new Font("SansSerif", Font.BOLD, 11);
-
+ 
     // ===================== PANEL GRADIENTE =====================
     public static class PanelGrad extends JPanel {
         private Color c1, c2;
@@ -45,7 +45,7 @@ public class UI {
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
     // ===================== CAMPO DE TEXTO =====================
     public static class Campo extends JTextField {
         public Campo() { init(); }
@@ -59,7 +59,7 @@ public class UI {
             setPreferredSize(new Dimension(0, 36));
         }
     }
-
+ 
     // ===================== AREA DE TEXTO =====================
     public static class Area extends JTextArea {
         public Area(int rows, int cols) {
@@ -71,7 +71,7 @@ public class UI {
                 BorderFactory.createEmptyBorder(7, 11, 7, 11)));
         }
     }
-
+ 
     // ===================== COMBO =====================
     public static class Combo extends JComboBox<String> {
         public Combo(String[] items) {
@@ -83,7 +83,7 @@ public class UI {
             setPreferredSize(new Dimension(0, 36));
         }
     }
-
+ 
     // ===================== BOTON PRIMARIO =====================
     public static class BtnPrimario extends JButton {
         private Color base, hover; private boolean over=false;
@@ -106,7 +106,7 @@ public class UI {
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
     // ===================== BOTON ICONO =====================
     public static class BtnIcono extends JButton {
         private Color base, hover; private boolean over=false;
@@ -130,7 +130,7 @@ public class UI {
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
     // ===================== BOTON NAV SIDEBAR =====================
     public static class BtnNav extends JToggleButton {
         public BtnNav(String txt) {
@@ -150,11 +150,50 @@ public class UI {
                 setForeground(BLANCO);
                 g2.setColor(AZUL_ACENTO);
                 g2.fill(new RoundRectangle2D.Float(0,6,4,getHeight()-12,4,4));
-            } else { setForeground(new Color(155,180,215)); }
+            } else { setForeground(new Color(170,195,230)); }
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
+    // ===================== BOTON SELECTOR (para fondo claro) =====================
+    public static class BtnSelector extends JToggleButton {
+        private boolean over = false;
+        public BtnSelector(String txt) {
+            super(txt);
+            setFont(F_NAV);
+            setForeground(GRIS_TEXTO);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setOpaque(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setPreferredSize(new Dimension(240, 38));
+            addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) { over=true; repaint(); }
+                public void mouseExited(MouseEvent e)  { over=false; repaint(); }
+            });
+        }
+        @Override protected void paintComponent(Graphics g) {
+            Graphics2D g2=(Graphics2D)g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+            if (isSelected()) {
+                g2.setColor(AZUL_ACENTO);
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                setForeground(BLANCO);
+            } else if (over) {
+                g2.setColor(new Color(220,230,245));
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                setForeground(AZUL_OSCURO);
+            } else {
+                g2.setColor(new Color(235,240,248));
+                g2.fill(new RoundRectangle2D.Float(0,0,getWidth(),getHeight(),8,8));
+                setForeground(GRIS_TEXTO);
+            }
+            g2.dispose(); super.paintComponent(g);
+        }
+    }
+ 
     // ===================== BOTON NAV SUBMENU =====================
     public static class BtnSubNav extends JToggleButton {
         public BtnSubNav(String txt) {
@@ -176,7 +215,7 @@ public class UI {
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
     // ===================== CARD PANEL =====================
     public static class Card extends JPanel {
         public Card() {
@@ -186,7 +225,7 @@ public class UI {
                 BorderFactory.createEmptyBorder(16,18,16,18)));
         }
     }
-
+ 
     // ===================== BADGE DE ESTADO =====================
     public static class Badge extends JLabel {
         public Badge(String txt, Color bg) {
@@ -206,14 +245,14 @@ public class UI {
             g2.dispose(); super.paintComponent(g);
         }
     }
-
+ 
     // ===================== SEPARADOR =====================
     public static JSeparator separador() {
         JSeparator s = new JSeparator();
         s.setForeground(new Color(220,228,238));
         return s;
     }
-
+ 
     // ===================== LABEL TITULO =====================
     public static JLabel labelTitulo(String txt) {
         JLabel l = new JLabel(txt); l.setFont(F_TITULO); l.setForeground(AZUL_OSCURO); return l;
@@ -224,7 +263,7 @@ public class UI {
     public static JLabel labelCampo(String txt) {
         JLabel l = new JLabel(txt); l.setFont(F_LABEL); l.setForeground(GRIS_TEXTO); return l;
     }
-
+ 
     // ===================== FILA CAMPO =====================
     public static JPanel filaCampo(String label, JComponent campo) {
         JPanel p = new JPanel(new BorderLayout(0,4)); p.setOpaque(false);
@@ -232,14 +271,14 @@ public class UI {
         p.add(campo, BorderLayout.CENTER);
         return p;
     }
-
+ 
     // ===================== SCROLL RESULTADO =====================
     public static JScrollPane scrollResultado(JTextArea area) {
         JScrollPane s = new JScrollPane(area);
         s.setBorder(new LineBorder(new Color(40,70,120),1,true));
         return s;
     }
-
+ 
     // ===================== PANEL SECCION =====================
     public static JPanel seccion(String titulo) {
         JPanel p = new JPanel(new BorderLayout(0,14)); p.setOpaque(false);

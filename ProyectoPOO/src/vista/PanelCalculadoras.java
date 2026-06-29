@@ -1,68 +1,66 @@
 package vista;
-
+ 
 import modelo.FabricaLiquidacion;
 import ui.UI;
-
+ 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
+ 
 public class PanelCalculadoras extends JPanel {
-
+ 
     private CardLayout cards = new CardLayout();
     private JPanel contenido = new JPanel(cards);
-
+ 
     public PanelCalculadoras() {
         setLayout(new BorderLayout(0, 0));
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(30, 35, 30, 35));
-
+ 
         // Titulo
         JPanel enc = new JPanel(new BorderLayout(0, 6));
         enc.setOpaque(false);
         enc.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-        enc.add(UI.labelTitulo("\uD83E\uDDEE  Calculadoras de Liquidacion"), BorderLayout.WEST);
-        enc.add(UI.labelSub("Despido sin causa (LCT) y Accidente de Trabajo (ART)"), BorderLayout.SOUTH);
+        enc.add(UI.labelTitulo("\u2696  Calculadoras de Liquidacion"), BorderLayout.WEST);        enc.add(UI.labelSub("Despido sin causa (LCT) y Accidente de Trabajo (ART)"), BorderLayout.SOUTH);
         add(enc, BorderLayout.NORTH);
-
-        // Selector de calculadora
+ 
+        // Selector de calculadora — usa BtnSelector en lugar de BtnNav
         JPanel selector = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         selector.setOpaque(false);
         selector.setBorder(BorderFactory.createEmptyBorder(0, 0, 16, 0));
-
+ 
         ButtonGroup bg = new ButtonGroup();
-        UI.BtnNav btnDespido = new UI.BtnNav("  \uD83D\uDCCB  Despido sin Causa");
-        UI.BtnNav btnART     = new UI.BtnNav("  \uD83C\uDFE5  Accidente de Trabajo (ART)");
+        UI.BtnSelector btnDespido = new UI.BtnSelector("  \uD83D\uDCBC  Despido sin Causa");
+        UI.BtnSelector btnART     = new UI.BtnSelector("  \uD83C\uDFE5  Accidente de Trabajo (ART)");
         bg.add(btnDespido); bg.add(btnART);
-
+ 
         selector.add(btnDespido);
         selector.add(Box.createHorizontalStrut(8));
         selector.add(btnART);
-
+ 
         contenido.setOpaque(false);
         contenido.add(panelDespido(), "despido");
         contenido.add(panelART(),     "art");
-
+ 
         btnDespido.addActionListener(e -> cards.show(contenido, "despido"));
         btnART.addActionListener(e     -> cards.show(contenido, "art"));
         btnDespido.setSelected(true);
         cards.show(contenido, "despido");
-
+ 
         JPanel centro = new JPanel(new BorderLayout());
         centro.setOpaque(false);
         centro.add(selector, BorderLayout.NORTH);
         centro.add(contenido, BorderLayout.CENTER);
         add(centro, BorderLayout.CENTER);
     }
-
+ 
     // ===================== CALCULADORA DESPIDO =====================
     private JPanel panelDespido() {
         JPanel p = new JPanel(new BorderLayout(0, 16));
         p.setOpaque(false);
-
-        // Formulario
+ 
         UI.Campo cNombre  = new UI.Campo();
         UI.Campo cRazon   = new UI.Campo();
         UI.Campo cSueldo  = new UI.Campo();
@@ -71,11 +69,11 @@ public class PanelCalculadoras extends JPanel {
         UI.Combo cRegimen = new UI.Combo(new String[]{"Sin Reforma (LCT Art 245)", "Con Reforma Laboral"});
         JCheckBox chkPre  = new JCheckBox("Preaviso otorgado");
         chkPre.setFont(UI.F_CAMPO); chkPre.setOpaque(false); chkPre.setForeground(UI.AZUL_OSCURO);
-
+ 
         UI.Card formCard = new UI.Card();
         formCard.setLayout(new GridLayout(4, 3, 14, 12));
         formCard.add(UI.filaCampo("Nombre del Empleado", cNombre));
-        formCard.add(UI.filaCampo("Razon Social Empleador", cRazon));
+        formCard.add(UI.filaCampo("Razón Social Empleador", cRazon));
         formCard.add(UI.filaCampo("Sueldo Bruto ($)", cSueldo));
         formCard.add(UI.filaCampo("Fecha Ingreso (DD/MM/AAAA)", cIngreso));
         formCard.add(UI.filaCampo("Fecha Egreso (DD/MM/AAAA)", cEgreso));
@@ -85,20 +83,18 @@ public class PanelCalculadoras extends JPanel {
         formCard.add(wrapCheck);
         formCard.add(new JPanel() {{ setOpaque(false); }});
         formCard.add(new JPanel() {{ setOpaque(false); }});
-
-        // Botones
+ 
         UI.BtnPrimario btnCalc = new UI.BtnPrimario("  Calcular Liquidacion", UI.AZUL_ACENTO, new Color(31, 97, 141));
         UI.BtnIcono btnLimpiar = new UI.BtnIcono("Limpiar", new Color(120, 120, 140), new Color(80, 80, 100));
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         btnPanel.setOpaque(false); btnPanel.add(btnCalc); btnPanel.add(btnLimpiar);
-
-        // Resultado
+ 
         JTextArea resultado = new JTextArea(14, 50);
         resultado.setEditable(false); resultado.setFont(UI.F_MONO);
         resultado.setBackground(UI.AZUL_OSCURO); resultado.setForeground(new Color(130, 220, 130));
         resultado.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
         resultado.setText("  Complete los datos y presione Calcular...");
-
+ 
         btnCalc.addActionListener(e -> {
             try {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -108,8 +104,7 @@ public class PanelCalculadoras extends JPanel {
                 LocalDate eg   = LocalDate.parse(cEgreso.getText().trim(), fmt);
                 boolean conRef = ((String) cRegimen.getSelectedItem()).contains("Con Reforma");
                 boolean pre    = chkPre.isSelected();
-                String reg     = (String) cRegimen.getSelectedItem();
-
+ 
                 String res = "  ==========================================\n"
                            + "       RECIBO DE LIQUIDACION FINAL\n"
                            + "  ==========================================\n"
@@ -124,14 +119,14 @@ public class PanelCalculadoras extends JPanel {
                     "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
+ 
         btnLimpiar.addActionListener(e -> {
             cNombre.setText(""); cRazon.setText(""); cSueldo.setText("");
             cIngreso.setText("DD/MM/AAAA"); cEgreso.setText("DD/MM/AAAA");
             chkPre.setSelected(false);
             resultado.setText("  Complete los datos y presione Calcular...");
         });
-
+ 
         p.add(formCard, BorderLayout.NORTH);
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.setOpaque(false);
@@ -140,12 +135,12 @@ public class PanelCalculadoras extends JPanel {
         p.add(centro, BorderLayout.CENTER);
         return p;
     }
-
+ 
     // ===================== CALCULADORA ART =====================
     private JPanel panelART() {
         JPanel p = new JPanel(new BorderLayout(0, 16));
         p.setOpaque(false);
-
+ 
         UI.Campo cNombre = new UI.Campo();
         UI.Campo cIBM    = new UI.Campo();
         UI.Campo cEdad   = new UI.Campo();
@@ -154,8 +149,7 @@ public class PanelCalculadoras extends JPanel {
             "Accidente Laboral / Enfermedad Profesional",
             "Accidente In Itinere"
         });
-
-        // Info formula
+ 
         JLabel infoForm = new JLabel("  Formula Ley 24.557:  53 x IBM x (%Incap / 100) x (65 / Edad)  —  se aplica el mayor entre formula y piso minimo vigente");
         infoForm.setFont(new Font("SansSerif", Font.ITALIC, 11));
         infoForm.setForeground(UI.GRIS_TEXTO);
@@ -163,7 +157,7 @@ public class PanelCalculadoras extends JPanel {
         infoForm.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(UI.BORDE_CAMPO, 1, true),
             BorderFactory.createEmptyBorder(7, 10, 7, 10)));
-
+ 
         UI.Card formCard = new UI.Card();
         formCard.setLayout(new BorderLayout(0, 12));
         JPanel grilla = new JPanel(new GridLayout(2, 3, 14, 12));
@@ -176,20 +170,18 @@ public class PanelCalculadoras extends JPanel {
         grilla.add(new JPanel() {{ setOpaque(false); }});
         formCard.add(grilla, BorderLayout.CENTER);
         formCard.add(infoForm, BorderLayout.SOUTH);
-
-        // Botones
+ 
         UI.BtnPrimario btnCalc   = new UI.BtnPrimario("  Calcular ART", UI.NARANJA, new Color(160, 60, 0));
         UI.BtnIcono    btnLimpiar = new UI.BtnIcono("Limpiar", new Color(120, 120, 140), new Color(80, 80, 100));
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         btnPanel.setOpaque(false); btnPanel.add(btnCalc); btnPanel.add(btnLimpiar);
-
-        // Resultado
+ 
         JTextArea resultado = new JTextArea(14, 50);
         resultado.setEditable(false); resultado.setFont(UI.F_MONO);
         resultado.setBackground(UI.AZUL_OSCURO); resultado.setForeground(new Color(255, 180, 100));
         resultado.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
         resultado.setText("  Complete los datos y presione Calcular...");
-
+ 
         btnCalc.addActionListener(e -> {
             try {
                 String nombre  = cNombre.getText().trim();
@@ -198,14 +190,14 @@ public class PanelCalculadoras extends JPanel {
                 int edad       = Integer.parseInt(cEdad.getText().trim());
                 double pct     = Double.parseDouble(cIncap.getText().replace(",", "."));
                 boolean esLab  = cTipo.getSelectedIndex() == 0;
-
+ 
                 if (edad <= 0 || edad >= 65) {
                     JOptionPane.showMessageDialog(this, "La edad debe estar entre 1 y 64.", "Error", JOptionPane.ERROR_MESSAGE); return;
                 }
                 if (pct <= 0 || pct > 66) {
                     JOptionPane.showMessageDialog(this, "El % de incapacidad debe ser entre 0.1 y 66.", "Error", JOptionPane.ERROR_MESSAGE); return;
                 }
-
+ 
                 String res = "  ==========================================\n"
                            + "     LIQUIDACION ART — LEY 24.557\n"
                            + "  ==========================================\n"
@@ -218,12 +210,12 @@ public class PanelCalculadoras extends JPanel {
                     "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-
+ 
         btnLimpiar.addActionListener(e -> {
             cNombre.setText(""); cIBM.setText(""); cEdad.setText(""); cIncap.setText("");
             resultado.setText("  Complete los datos y presione Calcular...");
         });
-
+ 
         p.add(formCard, BorderLayout.NORTH);
         JPanel centro = new JPanel(new BorderLayout(0, 8));
         centro.setOpaque(false);

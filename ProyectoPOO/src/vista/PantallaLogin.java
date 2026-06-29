@@ -58,8 +58,10 @@ public class PantallaLogin extends JFrame {
 
         UI.Campo txtDni = new UI.Campo();
         txtDni.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        txtDni.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPasswordField passField = crearPasswordField();
+        passField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         UI.BtnPrimario btnLogin = new UI.BtnPrimario("  Ingresar", UI.AZUL_ACENTO, new Color(31, 97, 141));
         btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
@@ -73,12 +75,15 @@ public class PantallaLogin extends JFrame {
         card.add(Box.createVerticalStrut(4));
         card.add(sub);
         card.add(Box.createVerticalStrut(34));
-        card.add(UI.labelCampo("DNI del Abogado"));
+        JLabel lblDni = UI.labelCampo("DNI del Abogado");
+        lblDni.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(lblDni);
         card.add(Box.createVerticalStrut(5));
         card.add(txtDni);
         card.add(Box.createVerticalStrut(16));
-        card.add(UI.labelCampo("Contrasena"));
-        card.add(Box.createVerticalStrut(5));
+        JLabel lblPass = UI.labelCampo("Contraseña");
+        lblPass.setAlignmentX(Component.CENTER_ALIGNMENT);
+        card.add(lblPass);        card.add(Box.createVerticalStrut(5));
         card.add(passField);
         card.add(Box.createVerticalStrut(26));
         card.add(btnLogin);
@@ -92,7 +97,7 @@ public class PantallaLogin extends JFrame {
             String pass = new String(passField.getPassword());
 
             if (dni.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Complete DNI y contrasena.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Complete DNI y contraseña.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -107,7 +112,7 @@ public class PantallaLogin extends JFrame {
 
             if (!a.getPassword().equals(pass)) {
                 JOptionPane.showMessageDialog(this,
-                    "Contrasena incorrecta.",
+                    "Contraseña incorrecta.",
                     "Error de acceso", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -164,13 +169,13 @@ public class PantallaLogin extends JFrame {
         card.add(Box.createVerticalStrut(12));
         fila(card, "DNI", txtDni);
         card.add(Box.createVerticalStrut(12));
-        fila(card, "Numero de Matricula", txtMatricula);
+        fila(card, "Número de Matricula", txtMatricula);
         card.add(Box.createVerticalStrut(12));
         fila(card, "CUIT", txtCuit);
         card.add(Box.createVerticalStrut(12));
-        fila(card, "Contrasena", txtPass);
+        fila(card, "Contraseña", txtPass);
         card.add(Box.createVerticalStrut(12));
-        fila(card, "Repetir Contrasena", txtPass2);
+        fila(card, "Repetir Contraseña", txtPass2);
         card.add(Box.createVerticalStrut(24));
         card.add(btnReg);
         card.add(Box.createVerticalStrut(14));
@@ -191,7 +196,7 @@ public class PantallaLogin extends JFrame {
                 return;
             }
             if (!pass.equals(pass2)) {
-                JOptionPane.showMessageDialog(this, "Las contrasenyas no coinciden.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (PersistenciaAbogado.existeAbogado(dni)) {
@@ -247,12 +252,14 @@ public class PantallaLogin extends JFrame {
 
     private void fila(JPanel card, String label, JComponent campo) {
         JLabel lbl = UI.labelCampo(label);
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-        campo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lbl.setForeground(new Color(140, 165, 200));
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        campo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
         card.add(lbl);
         card.add(Box.createVerticalStrut(4));
         card.add(campo);
-    }
+}
 
     private void abrirVentanaPrincipal() {
         VentanaPrincipal vp = new VentanaPrincipal();

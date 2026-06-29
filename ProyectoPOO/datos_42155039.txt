@@ -1,0 +1,9 @@
+CLIENTE_INI
+id=CLI-DDA3E346
+nombre=francesco
+dni=2626262
+cuil=2822828
+telefono=2727272
+email=a@gmail.com
+domicilio=pilar
+CLIENTE_FIN
