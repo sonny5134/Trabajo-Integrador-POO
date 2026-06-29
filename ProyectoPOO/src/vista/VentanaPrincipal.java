@@ -126,7 +126,7 @@ public class VentanaPrincipal extends JFrame {
         UI.BtnNav btnDash   = navBtn("\uD83C\uDFE0  Dashboard");
         UI.BtnNav btnCli    = navBtn("\uD83D\uDC64  Clientes");
         UI.BtnNav btnCasos  = navBtn("\uD83D\uDCC2  Expedientes");
-        UI.BtnNav btnCalc   = navBtn("\uD83E\uDDEE  Calculadoras");
+        UI.BtnNav btnCalc   = navBtn("\u2696  Calculadoras");
         UI.BtnNav btnVenc   = navBtn("\uD83D\uDCC5  Vencimientos");
 
         grupoNav.add(btnDash); grupoNav.add(btnCli); grupoNav.add(btnCasos);
@@ -143,7 +143,7 @@ public class VentanaPrincipal extends JFrame {
         pie.setOpaque(false);
         pie.setBorder(BorderFactory.createEmptyBorder(0, 14, 18, 14));
 
-        JButton btnSalir = new JButton("  Cerrar sesion");
+        JButton btnSalir = new JButton("  Cerrar sesión");
         btnSalir.setFont(new Font("SansSerif",Font.PLAIN,11));
         btnSalir.setForeground(new Color(180,100,100));
         btnSalir.setContentAreaFilled(false); btnSalir.setBorderPainted(false);
